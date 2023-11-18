@@ -7,6 +7,7 @@ p = 0.1 # probability of infection
 d = 10 # number of days to simulate
 i = 1 # number of initial infection
 
+# jkl
 class Computer:
     def __init__(self, infected, p):
         self.infected = infected
