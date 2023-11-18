@@ -1,13 +1,12 @@
 import random
 from collections import Counter
 
-t = 1 # number of simulations to run
+t = 10000 # number of simulations to run
 n = 20 # size of network
 p = 0.1 # probability of infection
 d = 10 # number of days to simulate
 i = 1 # number of initial infection
 
-# jkl
 class Computer:
     def __init__(self, infected, p):
         self.infected = infected
@@ -72,10 +71,10 @@ def expected_value(num_trials, network_size, num_infect):
     infected = 0.0
     not_infected = 0.0
     d = {}
-    network = create_network(network_size)
-    initial_infection(num_infect, network)
     print('Running %d trials...' %(num_trials))
     while i < num_trials:
+        network = create_network(network_size)
+        initial_infection(num_infect, network)
         temp_dict = daily_infection(network)
         infected += temp_dict['infected']
         not_infected += temp_dict['not_infected']
