@@ -1,7 +1,7 @@
 import random
 from collections import Counter
 
-t = 10000 # number of simulations to run
+t = 100000 # number of simulations to run
 n = 20 # size of network
 p = 0.1 # probability of infection
 d = 0 # number of days it takes to infect each computer once
@@ -17,9 +17,8 @@ def main():
     # network = create_network(n) # create a network of computers of size n
     # initial_infection(i, network) # assign initial number of computers to be infected
     # print('Expected value of %.2f computers infected in the network of %d computers in %d trials with %.2f probability of infection' %(expected_value(t, n, i), n, t, p))
-    network = create_network(n)
-    initial_infection(i, network)
-    print(infect_all(network, d))
+    # print(infect_all(network, d))
+    infected_once(t, i, d)
 
 def create_network(network_size):
     # print('Creating network of size: %d' %(network_size))
@@ -98,5 +97,16 @@ def expected_value(num_trials, network_size, num_infect):
     d['not_infected'] = not_infected
     # print(d)
     return infected / num_trials
+
+def infected_once(num_trials, num_infect, d):
+    i = 0
+    days = 0
+    while i < num_trials:
+        # print(infect_all(network, d))
+        network = create_network(n)
+        initial_infection(num_infect, network)
+        days += infect_all(network, d)
+        i += 1
+    print('Expected number of days that each computer is infected at least once: %.2f' %(days / i))
 
 main()
