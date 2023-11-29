@@ -2,15 +2,19 @@ import time
 import random
 import numpy as np
 
-num_simulations = 100000 # number of simulations to run
-n = 20 # size of network
-p = 0.1 # probability of infection
-r = 5 # max quantity of repairs
+num_simulations = 10000 # number of simulations to run
+n_size = 20 # size of network
+p_virus = 0.1 # probability of infection
+r_max = 5 # max quantity of repairs
+v_init = 1 # virus initial infection
 
 class Computer:
     infected = False
     infected_once = False
-    p = 0.1 # probability of being infected
+    # p = 0.1 # probability of being infected
+
+    def __init__(self, p_virus):
+        self.p = p_virus
     
     def infect(self):
         self.infected = True
@@ -23,7 +27,7 @@ class Computer:
 def create_network(network_size):
     network = []
     for i in range(network_size):
-        network.append(Computer())
+        network.append(Computer(p_virus))
     return network
 
 def initial_infection(network, quantity):
@@ -66,49 +70,52 @@ def number_infected_once(network):
 def daily_repair(network):  
     i = 0 # current number of repairs
     for computer in network:
-        if computer.infected and i < r:
+        if computer.infected and i < r_max:
             computer.repair()
             i += 1
     # print('Repaired a total of %d computers' %(i))
     return network
 
+# Part C 2.98
 def expected_number_infected():
     total_number_infected_computers = 0
     for _ in range(num_simulations):
-        network = create_network(n) # create new network of size n
-        network = initial_infection(network, 1) # initial infection
+        network = create_network(n_size) # create new network of size n
+        network = initial_infection(network, v_init) # initial infection
         network = daily_infection(network) # daily infection simulation
         total_number_infected_computers += number_infected(network) # sum number of infected computers per trial
 
     print('%.4f' %(total_number_infected_computers / num_simulations)) # expected number of infected computers
 
+# Part B 0.0012
 def probability_infected_once():
     total_number_infected_once = 0
     for _ in range(num_simulations):
-        network = create_network(n) # create new network of size n
-        network = initial_infection(network, 1) # initial infection
+        network = create_network(n_size) # create new network of size n
+        network = initial_infection(network, v_init) # initial infection
         num_current_infected = 0
-        while num_current_infected < n:
+        while num_current_infected < n_size:
             network = daily_infection(network) # daily infection simulation
             num_current_infected = number_infected(network)
-            if num_current_infected == n or num_current_infected == 0:
+            if num_current_infected == n_size or num_current_infected == 0:
                 break
             network = daily_repair(network) # daily repair
             # current_infected = number_infected(network)
-        if number_infected_once(network) == n:
+        if number_infected_once(network) == n_size:
             total_number_infected_once += 1
         
     # print(total_number_infected_once)
     print('%.4f' %(total_number_infected_once / num_simulations))
 
+# Part A 73 days*
 def remove_virus():
     # elapsed_days = 0
     start_time = time.time()
     time_taken = []
     for _ in range(num_simulations):
         elapsed_days = 0
-        network = create_network(n)
-        network = initial_infection(network, 1)
+        network = create_network(n_size)
+        network = initial_infection(network, v_init)
         num_current_infected = number_infected(network)
         while num_current_infected > 0:
             network = daily_infection(network)
@@ -121,7 +128,7 @@ def remove_virus():
     end_time = time.time()
     execution_time = end_time - start_time
     mean = np.mean(time_taken)
-    print('Mean of: %.4f with exeution time: %f seconds' %(mean, execution_time))
+    print('Mean of: %.4f with execution time: %f seconds' %(mean, execution_time))
     return mean
 
 # expected_number_infected()
@@ -138,8 +145,7 @@ start_time = time.time()
 
 average = []
 
-for i in range(1):
-    print('Trial: %d' %(i + 1))
+for _ in range(1):
     mean = remove_virus()
     average.append(mean)
 
