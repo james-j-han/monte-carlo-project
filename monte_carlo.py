@@ -1,7 +1,8 @@
+import time
 import random
 import numpy as np
 
-num_simulations = 10 # number of simulations to run
+num_simulations = 100000 # number of simulations to run
 n = 20 # size of network
 p = 0.1 # probability of infection
 r = 5 # max quantity of repairs
@@ -101,24 +102,48 @@ def probability_infected_once():
     print('%.4f' %(total_number_infected_once / num_simulations))
 
 def remove_virus():
-    elapsed_days = 0
+    # elapsed_days = 0
+    start_time = time.time()
+    time_taken = []
     for _ in range(num_simulations):
+        elapsed_days = 0
         network = create_network(n)
         network = initial_infection(network, 1)
-        # network = initial_infection(network, random.randint(1, n)) # start with random number of initially infected for this to work
         num_current_infected = number_infected(network)
         while num_current_infected > 0:
             network = daily_infection(network)
-            print('Infected: %d' %(number_infected(network)))
+            # print('Infected: %d' %(number_infected(network)))
             network = daily_repair(network)
-            print('Infected after repair: %d' %(number_infected(network)))
+            # print('Infected after repair: %d' %(number_infected(network)))
             num_current_infected = number_infected(network)
             elapsed_days += 1
-        
-        print('Elapsed days: %d' %(elapsed_days))
-    print('%.4f' %(elapsed_days / num_simulations))
-    # print('%.4f' %(np.mean(elapsed_days)))
+        time_taken.append(elapsed_days)
+    end_time = time.time()
+    execution_time = end_time - start_time
+    mean = np.mean(time_taken)
+    print('Mean of: %.4f with exeution time: %f seconds' %(mean, execution_time))
+    return mean
 
 # expected_number_infected()
 # probability_infected_once()
-remove_virus()
+# time_taken = []
+
+# for _ in range(num_simulations):
+#     time_to_remove = remove_virus()
+#     time_taken.append(time_to_remove)
+
+# print(np.mean(time_taken))
+
+start_time = time.time()
+
+average = []
+
+for i in range(1):
+    print('Trial: %d' %(i + 1))
+    mean = remove_virus()
+    average.append(mean)
+
+end_time = time.time()
+execution_time = end_time - start_time
+print('Total exectution time for entire simulation: %.4f minutes' %(execution_time / 60))
+print('Final mean: %.4f' %(np.mean(average)))
