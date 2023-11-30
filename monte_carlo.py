@@ -3,10 +3,10 @@ import random
 import numpy as np
 
 num_simulations = 10000 # number of simulations to run
-n_size = 20 # size of network
-p_virus = 0.1 # probability of infection
-r_max = 5 # max quantity of repairs
-v_init = 1 # virus initial infection
+n_size = int(input("Enter the number of computers in the network: "))# size of network
+p_virus = float(input("Enter the probability of infected computers infecting other computers. Has to be between 0 and 1: ")) # probability of infection
+r_max = int(input("Enter the maximum number of computers you want to repair each day: ")) # max quantity of repairs
+v_init = int(input("Enter the initial number of computers that has infection: ")) # virus initial infection
 
 class Computer:
     infected = False
@@ -84,7 +84,7 @@ def expected_number_infected():
         network = initial_infection(network, v_init) # initial infection
         network = daily_infection(network) # daily infection simulation
         total_number_infected_computers += number_infected(network) # sum number of infected computers per trial
-
+    print("The Expected Number of infected computers is: ", end = " ")
     print('%.4f' %(total_number_infected_computers / num_simulations)) # expected number of infected computers
 
 # Part B 0.0012
@@ -105,6 +105,7 @@ def probability_infected_once():
             total_number_infected_once += 1
         
     # print(total_number_infected_once)
+    print("The probability of every computers getting infected at least once is: ", end = " ")
     print('%.4f' %(total_number_infected_once / num_simulations))
 
 # Part A 73 days*
@@ -131,8 +132,22 @@ def remove_virus():
     print('Mean of: %.4f with execution time: %f seconds' %(mean, execution_time))
     return mean
 
-# expected_number_infected()
-# probability_infected_once()
+def main():
+    # Terminate the program immediately since one of the number is less than or equal to 0
+    if n_size <= 0 or v_init <= 0 or r_max <= 0 or p_virus < 0:
+        print("One of the number is invalid. For the amount of computers, number of initial computers infected and maximum of repaired computers per day, make sure it has to be larger than 0. For the infected probability, it needs to be at least equal to 0.")
+        return 0
+    if v_init > n_size:
+        print("The number of initial infected computer is higher than the size of the network itself.")
+        return 0
+    if p_virus > 1:
+        print("Probability can not be higher than 1.")
+        return 0
+    print()
+    expected_number_infected()
+    print()
+    probability_infected_once()
+    print()
 # time_taken = []
 
 # for _ in range(num_simulations):
@@ -141,15 +156,16 @@ def remove_virus():
 
 # print(np.mean(time_taken))
 
-start_time = time.time()
+    start_time = time.time()
 
-average = []
+    average = []
 
-for _ in range(1):
-    mean = remove_virus()
-    average.append(mean)
+    for _ in range(1):
+        mean = remove_virus()
+        average.append(mean)
 
-end_time = time.time()
-execution_time = end_time - start_time
-print('Total exectution time for entire simulation: %.4f minutes' %(execution_time / 60))
-print('Final mean: %.4f' %(np.mean(average)))
+    end_time = time.time()
+    execution_time = end_time - start_time
+    print('Total exectution time for entire simulation: %.4f minutes' %(execution_time / 60))
+    print('Final expected days to fix all computers in the network: %.4f' %(np.mean(average)))
+main()
